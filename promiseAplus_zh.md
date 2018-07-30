@@ -55,14 +55,14 @@ promise的<code>then</code>方法接收两个参数：
    - 2.2.2.1 此函数必须在<code>promise</code> rejected后被调用,并把<code>promise</code> 的reason作为它的第一个参数
    - 2.2.2.2 此函数在<code>promise</code> rejected之前绝对不能被调用
    - 2.2.2.2 此函数绝对不能被调用超过一次
-##### 2.2.4 在执行上下文堆栈（[execution context](https://es5.github.io/#x10.3)）仅包含[平台代码之前，不得调用 <code>onFulfilled</code>和<code>onRejected</code>](#31)
-##### 2.2.5 <code>onFulfilled</code>和<code>onRejected</code>必须被当做函数调用(i.e. with no this value-->这里不会翻......). [3.2]
+##### 2.2.4 在执行上下文堆栈（[execution context](https://es5.github.io/#x10.3)）仅包含平台代码之前，不得调用 <code>onFulfilled</code>和<code>onRejected</code>[3.1](#31)
+##### 2.2.5 <code>onFulfilled</code>和<code>onRejected</code>必须被当做函数调用(i.e. with no this value-->这里不会翻......). [3.2](#32)
 ##### 2.2.6 <code>then</code>可以在同一个promise里被多次调用
    - 2.2.6.1 如果/当 <code>promise</code> 完成执行（fulfilled）,各个相应的<code>onFulfilled</code>回调
    必须根据最原始的<code>then</code> 顺序来调用
    - 2.2.6.2 如果/当 <code>promise</code> 被拒绝（rejected）,各个相应的<code>onRejected</code>回调
    必须根据最原始的<code>then</code> 顺序来调用
-##### 2.2.7 <code>then</code>必须返回一个promise[3.3]
+##### 2.2.7 <code>then</code>必须返回一个promise[3.3](#33)
    ```
      promise2 = promise1.then(onFulfilled, onRejected);
    ```
@@ -84,12 +84,12 @@ promise的<code>then</code>方法接收两个参数：
    
    运行<code>[[Resolve]](promise, x)</code>,执行以下步骤：
 ##### 2.3.1如果<code>promise</code>和<code>x</code>引用同一个对象，则用<code>TypeError</code>作为原因拒绝（reject）<code>promise</code>。
-##### 2.3.2如果<code>x</code>是一个promise,采用promise的状态[3.4]
+##### 2.3.2如果<code>x</code>是一个promise,采用promise的状态[3.4](#34)
    - 2.3.2.1 如果<code>x</code>是请求状态(pending),<code>promise</code>必须保持pending直到<code>x</code>fulfilled或rejected
    - 2.3.2.2 如果<code>x</code>是完成态(fulfilled)，用相同的值完成如果<code>promise</code>
    - 2.3.2.2 如果<code>x</code>是拒绝态(rejected)，用相同的原因reject<code>promise</code>
 ##### 2.3.3另外，如果<code>x</code>是个对象或者方法
-   - 2.3.3.1 让<code>x</code>作为<code>x.then</code>. [3.5]
+   - 2.3.3.1 让<code>x</code>作为<code>x.then</code>. [3.5](#35)
    - 2.3.3.2 如果取回的<code>x.then</code>属性的结果为一个异常<code>e</code>,用<code>e</code>作为原因reject <code>promise</code>
    - 2.3.3.3 如果<code>then</code>是一个方法，把<code>x</code>当作<code>this</code>来调用它，
    第一个参数为 <code>resolvePromise</code>，第二个参数为<code>rejectPromise</code>,其中:
@@ -103,22 +103,26 @@ promise的<code>then</code>方法接收两个参数：
 ##### 2.3.4 如果 <code>x</code>既不是对象也不是函数，用<code>x</code>完成(fulfill)<code>promise</code> 
 如果一个promise被一个thenable resolve,并且这个thenable参与了循环的thenable环，
 <code>[[Resolve]](promise, thenable)</code>的递归特性最终会引起<code>[[Resolve]](promise, thenable)</code>再次被调用。
-遵循上述算法会导致无限递归，鼓励（但不是必须）实现检测这种递归并用包含信息的<code>TypeError</code>作为reason拒绝（reject）[2.3]
+遵循上述算法会导致无限递归，鼓励（但不是必须）实现检测这种递归并用包含信息的<code>TypeError</code>作为reason拒绝（reject）[3.6](#36)
 
 ### 3.备注
-<h3 id="31">这里的"平台代码"</h3>
+<h3 id="31">3.1这里的"平台代码"</h3>
 指的是引擎，环境和promise执行代码。在实践中，此要求确保<code>onFulfilled</code>和<code>onRejected</code>
 能够异步执行，在<code>then</code>被调用之后传入实践环，并使用新的栈。这可以使用诸如<code>setTimeout</code>或<code>setImmediate</code>之类的“宏任务”机制，
 或者使用诸如<code>MutationObserver</code>或<code>process.nextTick</code>之类的“微任务”机制来实现。
 由于promise实现被认为是平台代码，因此它本身可能包含一个任务调度队列或调用处理程序的“trampoline”。
-- 3.2 
+<h3 id="32">3.2</h3>
 也就是说，在严格模式下，<code>this</code>是未定义的; 在宽松模式下，它将成为全局对象。
-- 3.3 在实例满足所有要求的情况下，可以允许<code>promise2 === promise1</code>.
+<h3 id="33">3.3</h3>
+在实例满足所有要求的情况下，可以允许<code>promise2 === promise1</code>.
 每个实例都必须表情是否能实现，以及再什么情况下，<code>promise2 === promise1</code>  ？？？
--3.4 通常，当<code>x</code>来自当前的实例时，<code>x</code>才是真正的<code>promise</code>
+<h3 id="34">3.4</h3>
+通常，当<code>x</code>来自当前的实例时，<code>x</code>才是真正的<code>promise</code>
 This clause allows the use of implementation-specific means to adopt the state of known-conformant promises
-- 3.5 这个流程首先保存<code>x.then</code>的引用，
+<h3 id="35">3.5</h3>
+这个流程首先保存<code>x.then</code>的引用，
 然后测试这个引用，然后调用这个引用，避免多次获取<code>x.then</code>属性。
 这些预防措施对于确保访问者属性的一致性非常重要，访问者属性的值可能在检索之间发生变化。
-- 3.6 实例不应该对thenable 链的深度设置任意限制，并假设递归超出任意限制，递归会无穷。只有真正的循环才会导致<code>TypeError</code>.
+<h3 id="36">3.6</h3>
+实例不应该对thenable 链的深度设置任意限制，并假设递归超出任意限制，递归会无穷。只有真正的循环才会导致<code>TypeError</code>.
 如果遇到thenbles的无限链，那么永远递归就是正确的行为。
