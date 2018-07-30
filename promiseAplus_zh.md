@@ -55,7 +55,7 @@ promise的<code>then</code>方法接收两个参数：
    - 2.2.2.1 此函数必须在<code>promise</code> rejected后被调用,并把<code>promise</code> 的reason作为它的第一个参数
    - 2.2.2.2 此函数在<code>promise</code> rejected之前绝对不能被调用
    - 2.2.2.2 此函数绝对不能被调用超过一次
-##### 2.2.4 在执行上下文堆栈（[execution context](https://es5.github.io/#x10.3)）仅包含[平台代码](#3.1这里的"平台代码")之前，不得调用 <code>onFulfilled</code>和<code>onRejected</code>
+##### 2.2.4 在执行上下文堆栈（[execution context](https://es5.github.io/#x10.3)）仅包含[平台代码之前，不得调用 <code>onFulfilled</code>和<code>onRejected</code>](#31)
 ##### 2.2.5 <code>onFulfilled</code>和<code>onRejected</code>必须被当做函数调用(i.e. with no this value-->这里不会翻......). [3.2]
 ##### 2.2.6 <code>then</code>可以在同一个promise里被多次调用
    - 2.2.6.1 如果/当 <code>promise</code> 完成执行（fulfilled）,各个相应的<code>onFulfilled</code>回调
@@ -106,13 +106,13 @@ promise的<code>then</code>方法接收两个参数：
 遵循上述算法会导致无限递归，鼓励（但不是必须）实现检测这种递归并用包含信息的<code>TypeError</code>作为reason拒绝（reject）[2.3]
 
 ### 3.备注
-
-#### 3.1 这里的"平台代码"
+<h3 id="31">这里的"平台代码"</h3>
 指的是引擎，环境和promise执行代码。在实践中，此要求确保<code>onFulfilled</code>和<code>onRejected</code>
 能够异步执行，在<code>then</code>被调用之后传入实践环，并使用新的栈。这可以使用诸如<code>setTimeout</code>或<code>setImmediate</code>之类的“宏任务”机制，
 或者使用诸如<code>MutationObserver</code>或<code>process.nextTick</code>之类的“微任务”机制来实现。
 由于promise实现被认为是平台代码，因此它本身可能包含一个任务调度队列或调用处理程序的“trampoline”。
-- 3.2 也就是说，在严格模式下，<code>this</code>是未定义的; 在宽松模式下，它将成为全局对象。
+- 3.2 
+也就是说，在严格模式下，<code>this</code>是未定义的; 在宽松模式下，它将成为全局对象。
 - 3.3 在实例满足所有要求的情况下，可以允许<code>promise2 === promise1</code>.
 每个实例都必须表情是否能实现，以及再什么情况下，<code>promise2 === promise1</code>  ？？？
 -3.4 通常，当<code>x</code>来自当前的实例时，<code>x</code>才是真正的<code>promise</code>
