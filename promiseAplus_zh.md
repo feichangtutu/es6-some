@@ -108,7 +108,7 @@ promise的<code>then</code>方法接收两个参数：
 ### 3.备注
 <h3 id="31">3.1这里的"平台代码"</h3>
 指的是引擎，环境和promise执行代码。在实践中，此要求确保<code>onFulfilled</code>和<code>onRejected</code>
-能够异步执行，在<code>then</code>被调用之后传入实践环，并使用新的栈。这可以使用诸如<code>setTimeout</code>或<code>setImmediate</code>之类的“宏任务”机制，
+能够异步执行，在<code>then</code>被调用之后传入事件环，并使用新的栈。这可以使用诸如<code>setTimeout</code>或<code>setImmediate</code>之类的“宏任务”机制，
 或者使用诸如<code>MutationObserver</code>或<code>process.nextTick</code>之类的“微任务”机制来实现。
 由于promise实现被认为是平台代码，因此它本身可能包含一个任务调度队列或调用处理程序的“trampoline”。
 <h3 id="32">3.2</h3>
